@@ -11,7 +11,7 @@ import (
 	"image"
 	"io"
 
-	"github.com/gen2brain/x264-go/x264c"
+	"github.com/scottlaird/x264-go/x264c"
 )
 
 // Logging constants.
@@ -145,8 +145,13 @@ func (e *Encoder) Encode(im image.Image) (err error) {
 	var picOut x264c.Picture
 
 	_, rgba := im.(*image.RGBA)
+	_, ycbcr := im.(*YCbCr)
 	if rgba {
 		e.img.ToYCbCr(im)
+	} else if ycbcr {
+		// Hack; if source image is already ycbcr, then don't convert.
+		// ToYCbCrDraw was eating >80% of my time in pprof.
+		e.img = im
 	} else {
 		e.img.ToYCbCrDraw(im)
 	}
