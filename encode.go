@@ -151,7 +151,7 @@ func (e *Encoder) Encode(im image.Image) (err error) {
 	} else if ycbcr {
 		// Hack; if source image is already ycbcr, then don't convert.
 		// ToYCbCrDraw was eating >80% of my time in pprof.
-		e.img = im
+		e.img = im.(*YCbCr)
 	} else {
 		e.img.ToYCbCrDraw(im)
 	}
